@@ -938,9 +938,6 @@ class MSUIMscolab(QtCore.QObject):
             QMessageBox.No)
         if reply == QMessageBox.No:
             return
-        data = {
-            "token": self.token
-        }
         try:
             response = self.conn.request_post("delete_own_account")
         except requests.exceptions.RequestException as ex:
