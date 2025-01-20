@@ -947,15 +947,16 @@ class MSUIMscolab(QtCore.QObject):
     def delete_account(self, _=None):
         # ToDo rename to delete_own_account
         reply = QMessageBox.question(
-            self.ui, self.tr('Continue?'),
+            self.ui,
+            self.tr('Continue?'),
             self.tr("You're about to delete your account. You cannot undo this operation!"),
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No)
         if reply == QMessageBox.No:
             return
         data = {
             "token": self.token
         }
-
         try:
             url = urljoin(self.mscolab_server_url, "delete_own_account")
             r = requests.post(url, data=data,
