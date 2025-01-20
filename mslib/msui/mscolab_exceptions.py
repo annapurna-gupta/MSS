@@ -1,15 +1,16 @@
+
 # -*- coding: utf-8 -*-
 """
 
-    mslib.version
-    ~~~~~~~~~~~~~~~~
+    mslib.msui.mscolab_exceptions
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This module provides the version number
+    Exceptions
 
     This file is part of MSS.
 
-    :copyright: Copyright 2016-2017 Reimar Bauer
-    :copyright: Copyright 2016-2024 by the MSS team, see AUTHORS.
+    :copyright: Copyright 2019 Shivashis Padhi
+    :copyright: Copyright 2019-2024 by the MSS team, see AUTHORS.
     :license: APACHE-2.0, see LICENSE for details.
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,4 +25,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 """
-__version__ = u'9.3.0'
+
+
+class MSColabConnectionError(RuntimeError):
+    pass

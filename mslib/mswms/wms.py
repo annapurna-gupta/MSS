@@ -52,7 +52,7 @@ import traceback
 import werkzeug
 import urllib.parse
 
-from xml.etree import ElementTree
+from defusedxml import ElementTree
 from chameleon import PageTemplateLoader
 from owslib.crs import axisorder_yx
 from PIL import Image
@@ -143,7 +143,7 @@ if mswms_settings.enable_basic_http_authentication:
         return authfunc(username, password)
 
 from mslib.mswms import mss_plot_driver
-from mslib.utils.coordinate import get_projection_params
+from mslib.utils.get_projection_params import get_projection_params
 
 # Logging the Standard Output, which will be added to the Apache Log Files
 logging.basicConfig(level=logging.DEBUG,

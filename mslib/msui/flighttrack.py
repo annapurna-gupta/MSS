@@ -40,13 +40,15 @@ import os
 
 import fs
 import xml.dom.minidom
-import xml.parsers.expat
+import defusedxml.minidom
+from defusedxml import DefusedXmlException
 
 from PyQt5 import QtGui, QtCore, QtWidgets
 
 from mslib import __version__
 from mslib.utils.units import units
-from mslib.utils.coordinate import find_location, path_points, get_distance
+from mslib.utils.coordinate import path_points, get_distance
+from mslib.utils.find_location import find_location
 from mslib.utils import thermolib
 from mslib.utils.verify_waypoint_data import verify_waypoint_data
 from mslib.utils.config import config_loader, save_settings_qsettings, load_settings_qsettings
@@ -55,7 +57,7 @@ from mslib.utils.qt import variant_to_string, variant_to_float
 from mslib.msui.performance_settings import DEFAULT_PERFORMANCE
 
 from mslib.utils import writexml
-xml.dom.minidom.Element.writexml = writexml
+xml.dom.minidom.Element.writexml = writexml  # nosec, we take care of writing correct XML
 # Constants for identifying the table columns when the WaypointsTableModel is
 # used with a QTableWidget.
 LOCATION, LAT, LON, FLIGHTLEVEL, PRESSURE = list(range(5))
@@ -97,8 +99,8 @@ TABLE_SHORT = [TABLE_FULL[_i] for _i in range(7)] + [TABLE_FULL[-1]] + [("", lam
 
 def load_from_xml_data(xml_content, name="Flight track"):
     try:
-        doc = xml.dom.minidom.parseString(xml_content)
-    except xml.parsers.expat.ExpatError as ex:
+        doc = defusedxml.minidom.parseString(xml_content)
+    except DefusedXmlException as ex:
         raise SyntaxError(str(ex))
 
     ft_el = doc.getElementsByTagName("FlightTrack")[0]
@@ -631,7 +633,7 @@ class WaypointsTableModel(QtCore.QAbstractTableModel):
         file_dir.close()
 
     def get_xml_doc(self):
-        doc = xml.dom.minidom.Document()
+        doc = xml.dom.minidom.Document()  # nosec, we take care of writing correct XML
         ft_el = doc.createElement("FlightTrack")
         ft_el.setAttribute("version", __version__)
         doc.appendChild(ft_el)
