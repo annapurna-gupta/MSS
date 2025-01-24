@@ -280,8 +280,9 @@ class RemoteSensingControlWidget(QtWidgets.QWidget, ui.Ui_RemoteSensingDockWidge
         med_lon = np.median(lon_lin)
         lon_lin = normalize_longitude(lon_lin, med_lon - 180, med_lon + 180)
         lines = list(zip(lon_lin[0:-1], lon_lin[1:], lat_lin[0:-1], lat_lin[1:]))
-        lines = [(x0 * np.cos(np.deg2rad(np.mean([y0, y1]))), x1 * np.cos(np.deg2rad(np.mean([y0, y1]))), y0, y1)
-                for x0, x1, y0, y1 in lines]
+        lines = [(x0 * np.cos(np.deg2rad(np.mean([y0, y1]))),
+                  x1 * np.cos(np.deg2rad(np.mean([y0, y1]))), y0, y1)
+                 for x0, x1, y0, y1 in lines]
 
         direction = [(x1 - x0, y1 - y0) for x0, x1, y0, y1 in lines]
         direction = [(_x / np.hypot(_x, _y), _y / np.hypot(_x, _y))
@@ -317,13 +318,13 @@ class RemoteSensingControlWidget(QtWidgets.QWidget, ui.Ui_RemoteSensingDockWidge
 
         """
         lines = [(_line[0][mid], _line[0][mid + 1], _line[1][mid], _line[1][mid + 1])
-                for _line, mid in zip(gc_lines, [len(_line[0]) // 2 for _line in gc_lines])
-                if len(_line[0]) > 2]
+                 for _line, mid in zip(gc_lines, [len(_line[0]) // 2 for _line in gc_lines])
+                 if len(_line[0]) > 2]
         lens = [np.hypot(_line[0][0] - _line[0][-1], _line[0][0] - _line[0][-1]) * 110.
                 for _line in gc_lines
                 if len(_line[0]) > 2]
         lines = [(x0 * np.cos(np.deg2rad(np.mean([y0, y1]))), x1 * np.cos(np.deg2rad(np.mean([y0, y1]))), y0, y1)
-                for x0, x1, y0, y1 in lines]
+                 for x0, x1, y0, y1 in lines]
         lines = [_x for _x, _l in zip(lines, lens) if _l > 10]
 
         direction = [(0.5 * (x0 + x1), 0.5 * (y0 + y1), x1 - x0, y1 - y0) for x0, x1, y0, y1 in lines]
