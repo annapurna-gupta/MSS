@@ -280,7 +280,7 @@ class RemoteSensingControlWidget(QtWidgets.QWidget, ui.Ui_RemoteSensingDockWidge
         med_lon = np.median(lon_lin)
         lon_lin = normalize_longitude(lon_lin, med_lon - 180, med_lon + 180)
         lines = list(zip(lon_lin[0:-1], lon_lin[1:], lat_lin[0:-1], lat_lin[1:]))
-        lines = [(x0 * np.cos(np.deg2rad(np.mean([y0, y1]))),x1 * np.cos(np.deg2rad(np.mean([y0, y1]))), y0, y1)
+        lines = [(x0 * np.cos(np.deg2rad(np.mean([y0, y1]))), x1 * np.cos(np.deg2rad(np.mean([y0, y1]))), y0, y1)
                  for x0, x1, y0, y1 in lines]
 
         direction = [(x1 - x0, y1 - y0) for x0, x1, y0, y1 in lines]
