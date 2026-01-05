@@ -7,8 +7,8 @@ jobs:
   Test-MSS-docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-    - uses: prefix-dev/setup-pixi@14c8aabd75893f83f4ab30c03e7cf853c8208961 # v0.8.10
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+    - uses: prefix-dev/setup-pixi@82d477f15f3a381dbcc8adc1206ce643fe110fb7 # v0.9.3
       with:
         pixi-version: latest
         cache: true

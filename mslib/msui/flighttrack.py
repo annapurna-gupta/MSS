@@ -36,6 +36,7 @@
 
 import datetime
 import logging
+import os
 from pathlib import Path
 
 import xml.dom.minidom
@@ -212,7 +213,11 @@ class WaypointsTableModel(QtCore.QAbstractTableModel):
         """
         Load settings from the file self.settingsfile.
         """
-        self.performance_settings = load_settings_qsettings(self.settings_tag, DEFAULT_PERFORMANCE)
+        settings = load_settings_qsettings(self.settings_tag, DEFAULT_PERFORMANCE)
+        # Ensure we have a dictionary. If QSettings returns a string/garbage, reset to default.
+        if not isinstance(settings, dict):
+            settings = DEFAULT_PERFORMANCE
+        self.performance_settings = settings
 
     def save_settings(self):
         """
@@ -626,11 +631,11 @@ class WaypointsTableModel(QtCore.QAbstractTableModel):
         if not filename:
             raise ValueError("filename to save flight track cannot be None or empty")
 
-        self.filename = Path(filename)
+        self.filename = filename
         doc = self.get_xml_doc()
-        with self.filename.open("w") as file_object:
+        with open(filename, "w") as file_object:
             doc.writexml(file_object, indent="  ", addindent="  ", newl="\n", encoding="utf-8")
-        self.name = self.filename.stem.replace(".ftml", "").strip()
+        self.name = os.path.basename(self.filename).replace(".ftml", "").strip()
 
     def get_xml_doc(self):
         doc = xml.dom.minidom.Document()  # nosec, we take care of writing correct XML

@@ -37,7 +37,7 @@ from pathlib import Path
 from urllib.request import urlopen
 from PyQt5 import QtWidgets, QtTest
 from mslib import __version__
-from tests.constants import ROOT_DIR, MSUI_CONFIG_PATH
+from tests.constants import ROOT_DIR, MSUI_CONFIG_PATH, MSUI_CONFIG_FILE_PATH
 from mslib.msui import msui
 from mslib.msui import msui_mainwindow as msui_mw
 from tests.utils import ExceptionMock
@@ -53,6 +53,42 @@ def test_main():
                         return_value=argparse.Namespace(version=True)):
             msui.main()
         assert pytest_wrapped_e.typename == "SystemExit"
+
+
+def test_keep_config_file(qtbot):
+    # in conftest we reset always the config file to an empty dict
+    _config = MSUI_CONFIG_FILE_PATH.read_text()
+    assert _config == "{}"
+    config = """{
+            "MSCOLAB_skip_archived_operations": true
+}"""
+    MSUI_CONFIG_FILE_PATH.write_text(config)
+    assert MSUI_CONFIG_FILE_PATH.exists()
+    msui = msui_mw.MSUIMainWindow()
+    with mock.patch("PyQt5.QtWidgets.QMessageBox.warning", return_value=QtWidgets.QMessageBox.Yes):
+        msui.close()
+    # after closing the window the config file should be the same as before
+    _config = MSUI_CONFIG_FILE_PATH.read_text()
+    assert _config == config
+
+
+def test_multiple_times_save_filename(qtbot, tmp_path):
+    msui = msui_mw.MSUIMainWindow()
+    msui.show()
+    msui.create_new_flight_track()
+    filename = os.path.join(tmp_path, "example.ftml")
+    assert os.path.exists(filename) is False
+    # verify that we can save the file multiple times
+    msui.save_flight_track(filename)
+    assert os.path.exists(filename)
+    first_timestamp = os.path.getmtime(filename)
+    msui.save_handler()
+    second_timestamp = os.path.getmtime(filename)
+    with mock.patch("PyQt5.QtWidgets.QMessageBox.warning", return_value=QtWidgets.QMessageBox.Yes):
+        msui.close()
+    # check that the second save is newer than the first one
+    assert second_timestamp > first_timestamp
+    assert os.path.exists(filename)
 
 
 class Test_MSS_TutorialMode:
@@ -93,7 +129,7 @@ class Test_MSS_AboutDialog:
         with urlopen(self.window.milestone_url) as f:
             text = f.read().decode("utf-8")
         expected_version = __version__
-        pattern = rf'value="is:closed milestone:{re.escape(expected_version)} "'
+        pattern = rf'value="is:closed milestone:{re.escape(expected_version)}"'
         assert re.search(pattern, text), f"Expected milestone format not found: {expected_version}"
 
 
